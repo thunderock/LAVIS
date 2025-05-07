@@ -10,6 +10,7 @@ import torch
 import torch.nn as nn
 from torch.cuda.amp import autocast as autocast
 from transformers import T5TokenizerFast
+import os
 
 from lavis.common.registry import registry
 from lavis.models.blip2_models.blip2 import Blip2Base, disabled_train
@@ -82,7 +83,7 @@ class Blip2T5(Blip2Base):
         t5_config = T5Config.from_pretrained(t5_model)
         t5_config.dense_act_fn = "gelu"
         self.t5_model = T5ForConditionalGeneration.from_pretrained(
-            t5_model, config=t5_config
+            t5_model, config=t5_config, cache_dir=os.environ.get("HF_CACHE_DIR", None)
         )
 
         for name, param in self.t5_model.named_parameters():
